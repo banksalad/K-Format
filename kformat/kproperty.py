@@ -55,7 +55,7 @@ class N(KProperty):
 
 class AN(KProperty):
 
-    EXPECTED_TYPES = N.EXPECTED_TYPES | {str, date, time}
+    EXPECTED_TYPES = N.EXPECTED_TYPES | {str, date, time, type(None)}
     FILLER = b' '
     ENCODING = 'euc-kr'
     DATE_FORMAT = '%Y%m%d'

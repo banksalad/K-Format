@@ -12,8 +12,9 @@ class TestKClass(unittest.TestCase):
         class Something:
             n: N(10)
             an: AN(20)
+            filler: AN(100)
 
-        sth = Something(123, "k-class")
+        sth = Something(123, "k-class", None)
         self.assertIsNotNone(sth)
 
     def test_kclass_to_bytes(self):
