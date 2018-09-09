@@ -26,4 +26,10 @@ def _kclass(cls):
 
 
 def kclass(_cls=None):
-    return _kclass(_cls)
+    def wrap(cls):
+        return _kclass(cls)
+
+    if _cls is None:
+        return wrap
+
+    return wrap(_cls)

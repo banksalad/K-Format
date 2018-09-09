@@ -4,3 +4,12 @@ python:
 
 script:
   - python3 -m unittest
+
+deploy:
+  provider: pypi
+  user: $PYPI_USERNAME
+  password: $PYPI_PASSWORD
+  on:
+    tags: true
+    branch: master
+    python: '3.7-dev'
