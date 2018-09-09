@@ -12,8 +12,11 @@ def _kclass(cls):
         prop_bytes = []
 
         for ((k, prop), v) in zip(props, args):
-            assert isinstance(prop, kproperty.KProperty)
-            assert type(v) in prop.expected_types
+            assert isinstance(prop, kproperty.KProperty), \
+                f'{prop.__name__} is not subtype of KProperty'
+            assert type(v) in prop.expected_types, \
+                f'{prop.__class__.__name__} cannot ' \
+                f'accept {type(v).__name__} type'
 
             setattr(self, k, (prop, v))
             prop_bytes.append(prop.to_bytes(v))
