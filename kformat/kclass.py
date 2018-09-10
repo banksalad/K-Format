@@ -4,7 +4,11 @@ from . import kproperty
 __all__ = ['kclass']
 
 
+KCLASS_ANNOTATION = '__kclass__'
+
+
 def _kclass(cls):
+    setattr(cls, KCLASS_ANNOTATION, True)
 
     props = [(k, prop) for (k, prop) in cls.__annotations__.items()]
 
@@ -12,14 +16,19 @@ def _kclass(cls):
         prop_bytes = []
 
         for ((k, prop), v) in zip(props, args):
-            assert isinstance(prop, kproperty.KProperty), \
-                f'{prop.__name__} is not subtype of KProperty'
-            assert type(v) in prop.expected_types, \
-                f'{prop.__class__.__name__} cannot ' \
-                f'accept {type(v).__name__} type'
+            if hasattr(prop, KCLASS_ANNOTATION) and prop.__kclass__:
+                assert isinstance(v, prop), \
+                    f'{type(v).__name__} is not type of {prop.__name__}'
+                prop_bytes.append(prop.bytes)
+            else:
+                assert isinstance(prop, kproperty.KProperty), \
+                    f'{prop.__name__} is not subtype of KProperty'
+                assert type(v) in prop.expected_types, \
+                    f'{prop.__class__.__name__} cannot ' \
+                    f'accept {type(v).__name__} type'
+                prop_bytes.append(prop.to_bytes(v))
 
             setattr(self, k, (prop, v))
-            prop_bytes.append(prop.to_bytes(v))
 
         setattr(cls, 'bytes', b''.join(prop_bytes))
 
