@@ -11,14 +11,20 @@ from kformat import *
 
 
 @kclass
+class Item:
+    sth: N(2)
+
+
+@kclass
 class Base:
     birthday: AN(8)
     name: AN(10)
     grade: N(3)
+    items: List[Item]
 
 
-base = Base(date(1980, 8, 12), '홍길동', 1)
-assert base.bytes == b'19800812\xc8\xab\xb1\xe6\xb5\xbf    001'
+base = Base(date(1980, 8, 12), '홍길동', 1, [Item(3), Item(4)])
+assert base.bytes == b'19800812\xc8\xab\xb1\xe6\xb5\xbf    0010304'
 ```
 
 ## Installation
