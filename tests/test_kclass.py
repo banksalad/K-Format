@@ -1,4 +1,5 @@
 import unittest
+from typing import List
 
 from kformat.kclass import kclass
 from kformat.kproperty import AN, N
@@ -18,12 +19,14 @@ class TestKClass(unittest.TestCase):
             n: N(10)
             an: AN(20)
             other: Other
+            others: List[Other]
             filler: AN(100)
 
         sth = Something(
             123,
             'k-class',
             Other(456, 'subclass'),
+            [],
             None
         )
         self.assertIsNotNone(sth)
@@ -42,11 +45,12 @@ class TestKClass(unittest.TestCase):
             a: N(10)
             b: AN(20)
             other: Other
+            others: List[Other]
             c: N(5)
             d: AN(10)
 
-        sth = Something(1, 2, Other(3, 4), 5, 6)
-        self.assertEqual(sth.bytes, b'NANANNNAN')
+        sth = Something(1, 2, Other(3, 4), [Other(1, 1), Other(1, 1)], 5, 6)
+        self.assertEqual(sth.bytes, b'NANANNANNANNNAN')
 
         # Reset to_bytes funcs to default
         N.to_bytes = _n
