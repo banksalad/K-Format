@@ -12,6 +12,10 @@ def _kclass(cls):
 
     props = [(k, prop) for (k, prop) in cls.__annotations__.items()]
 
+    @property
+    def to_bytes(self):
+        return b''.join(self._bytes)
+
     def init(self, *args):
         prop_bytes = []
 
@@ -19,7 +23,7 @@ def _kclass(cls):
             if hasattr(prop, KCLASS_ANNOTATION) and prop.__kclass__:
                 assert isinstance(v, prop), \
                     f'{type(v).__name__} is not type of {prop.__name__}'
-                prop_bytes.append(prop.bytes)
+                prop_bytes.append(v.bytes)
             elif hasattr(prop, '__origin__') and prop.__origin__ == list:
                 assert isinstance(v, list), f'{type(v).__name__} is not List'
                 assert all(
@@ -36,7 +40,9 @@ def _kclass(cls):
 
             setattr(self, k, (prop, v))
 
-        setattr(cls, 'bytes', b''.join(prop_bytes))
+        setattr(self, '_bytes', prop_bytes)
+
+    setattr(cls, 'bytes', to_bytes)
 
     setattr(cls, '__init__', init)
 

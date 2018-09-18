@@ -55,3 +55,15 @@ class TestKClass(unittest.TestCase):
         # Reset to_bytes funcs to default
         N.to_bytes = _n
         AN.to_bytes = _an
+
+    def test_list_of_kclass_creation(self):
+
+        @kclass
+        class Something:
+            n: N(1)
+
+        some_list = [Something(1), Something(2), Something(3)]
+        self.assertEqual(
+            b''.join(s.bytes for s in some_list),
+            b'123'
+        )
