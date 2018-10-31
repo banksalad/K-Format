@@ -24,12 +24,27 @@ class TestKProperty(unittest.TestCase):
             b'12345'
         )
         self.assertEqual(
+            N(5).to_bytes(-1),
+            b'-0001'
+        )
+        self.assertEqual(
+            N(3).to_bytes(-12),
+            b'-12'
+        )
+        self.assertEqual(
             N(10, filler=b'?').to_bytes(3),
             b'?????????3'
+        )
+        self.assertEqual(
+            N(5, filler=b'-').to_bytes(3),
+            b'----3'
         )
 
         with self.assertRaises(ValueError):
             N(3).to_bytes(1234)
+
+        with self.assertRaises(ValueError):
+            N(2).to_bytes(-10)
 
     def test_AN_to_bytes(self):
         self.assertEqual(

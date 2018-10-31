@@ -25,7 +25,7 @@ class TestKClass(unittest.TestCase):
         sth = Something(
             123,
             'k-class',
-            Other(456, 'subclass'),
+            Other(-456, 'subclass'),
             [],
             None
         )

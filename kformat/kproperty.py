@@ -44,9 +44,17 @@ class N(KProperty):
         )
 
     def to_bytes(self, v: Optional) -> bytes:
-        s = str(int(v)) if v is not None else ''
         try:
-            b = bytes(s, encoding=N.ENCODING).rjust(self.length, self.filler)
+            p = b'-' if v < 0 else b''
+            s = str(int(abs(v)))
+        except TypeError:
+            p, s = b'', ''
+
+        try:
+            b = p + bytes(s, encoding=N.ENCODING).rjust(
+                self.length - len(p),
+                self.filler
+            )
             assert len(b) <= self.length
             return b
         except AssertionError:
