@@ -17,9 +17,14 @@ class Item:
 
 @kclass
 class Base:
-    birthday: AN(8) // AN means `alpha-numeric`
-    name: AN(10)    
-    grade: N(3)     // N means `numberic`
+    """
+    AN: `alpha-numeric`
+    N: `numberic`
+    """
+    
+    birthday: AN(8)
+    name: AN(10)
+    grade: N(3)
     items: List[Item]
 
 
