@@ -17,6 +17,11 @@ class Item:
 
 @kclass
 class Base:
+    """
+    AN: `alpha-numeric`
+    N: `numberic`
+    """
+    
     birthday: AN(8)
     name: AN(10)
     grade: N(3)
