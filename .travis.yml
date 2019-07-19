@@ -1,9 +1,18 @@
 language: python
+
+dist: xenial
+
 python:
-  - "3.7-dev"
+  - "3.7"
+
+cache:
+  - pip
+
+install:
+  - pip install -r requirements-dev.txt
 
 script:
-  - python3 -m unittest
+  - pytest
 
 deploy:
   provider: pypi
@@ -12,4 +21,3 @@ deploy:
   on:
     tags: true
     branch: master
-    python: '3.7-dev'
