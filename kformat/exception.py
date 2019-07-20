@@ -12,13 +12,13 @@ class KFormatError(Exception):
 
 
 class WrongTypeError(KFormatError):
-    def __init__(self, expect: Type, value):
+    def __init__(self, expected: Type, value):
         super().__init__()
-        self.expect = expect
+        self.expected = expected
         self.value = value
 
     def __str__(self) -> str:
-        return f'Should be "{_name(self.expect)}" instead of "{_name(self.value)}"'
+        return f'"{_name(self.expected)}" is expected, but "{_name(self.value)}" is given'
 
 
 class TooLongValueError(KFormatError):
