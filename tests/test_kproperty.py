@@ -1,75 +1,56 @@
-import unittest
 from datetime import date, time
 
-from kformat.kproperty import *
+import pytest
+
+from kformat.kproperty import AN, N
 
 
-class TestKProperty(unittest.TestCase):
+@pytest.mark.parametrize(
+    'length, value, expected',
+    [
+        (5, None, b'00000'),
+        (5, 0, b'00000'),
+        (5, 3, b'00003'),
+        (5, 12345, b'12345'),
+        (5, -1, b'-0001'),
+        (3, -12, b'-12'),
+    ],
+)
+def test_N_to_bytes(length, value, expected):
+    assert N(length).to_bytes(value) == expected
 
-    def test_N_to_bytes(self):
-        self.assertEqual(
-            N(5).to_bytes(None),
-            b'00000'
-        )
-        self.assertEqual(
-            N(5).to_bytes(0),
-            b'00000'
-        )
-        self.assertEqual(
-            N(5).to_bytes(3),
-            b'00003'
-        )
-        self.assertEqual(
-            N(5).to_bytes(12345),
-            b'12345'
-        )
-        self.assertEqual(
-            N(5).to_bytes(-1),
-            b'-0001'
-        )
-        self.assertEqual(
-            N(3).to_bytes(-12),
-            b'-12'
-        )
-        self.assertEqual(
-            N(10, filler=b'?').to_bytes(3),
-            b'?????????3'
-        )
-        self.assertEqual(
-            N(5, filler=b'-').to_bytes(3),
-            b'----3'
-        )
 
-        with self.assertRaises(ValueError):
-            N(3).to_bytes(1234)
+@pytest.mark.parametrize(
+    'length, filler, value, expected',
+    [(10, b'?', 3, b'?????????3'), (5, b'-', 3, b'----3')],
+)
+def test_N_to_bytes_with_filler(length, filler, value, expected):
+    assert N(length, filler=filler).to_bytes(value) == expected
 
-        with self.assertRaises(ValueError):
-            N(2).to_bytes(-10)
 
-    def test_AN_to_bytes(self):
-        self.assertEqual(
-            AN(10).to_bytes('sunghyunzz'),
-            b'sunghyunzz'
-        )
-        self.assertEqual(
-            AN(10).to_bytes('황성현'),
-            b'\xc8\xb2\xbc\xba\xc7\xf6    '
-        )
-        self.assertEqual(
-            AN(10).to_bytes(date(2018, 9, 9)),
-            b'20180909  '
-        )
-        self.assertEqual(
-            AN(10).to_bytes(time(15, 47, 0, 0)),
-            b'1547000000'
-        )
-        self.assertEqual(
-            AN(12).to_bytes(time(15, 35, 12, 345678)),
-            b'1535123456  '
-        )
-        self.assertEqual(
-            AN(5).to_bytes(1),
-            b'1    '
-        )
-        with self.assertRaises(ValueError):
-            AN(5).to_bytes(date(2018, 9, 9))
+@pytest.mark.parametrize('length, value', [(3, 1234), (2, -10)])
+def test_N_to_bytes_with_invalid_length(length, value):
+    with pytest.raises(ValueError) as e:
+        assert N(length).to_bytes(value)
+    assert 'Too long value is given' in str(e.value)
+
+
+@pytest.mark.parametrize(
+    'length, value, expected',
+    [
+        (10, 'sunghyunzz', b'sunghyunzz'),
+        (10, '황성현', b'\xc8\xb2\xbc\xba\xc7\xf6    '),
+        (10, date(2018, 9, 9), b'20180909  '),
+        (10, time(15, 47, 0, 0), b'1547000000'),
+        (12, time(15, 35, 12, 345678), b'1535123456  '),
+        (5, 1, b'1    '),
+    ],
+)
+def test_AN_to_bytes(length, value, expected):
+    assert AN(length).to_bytes(value) == expected
+
+
+def test_AN_to_bytes_with_invalid_length():
+    with pytest.raises(ValueError) as e:
+        assert AN(5).to_bytes(date(2018, 9, 9))
+    assert 'Too long value is given' in str(e.value)
