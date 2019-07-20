@@ -75,17 +75,17 @@ class TestWrongTypeInit:
     def test_prop_is_not_kclass(self):
         with pytest.raises(UnexpectedTypeError) as e:
             self.something(1, [1, 2])
-        assert str(e.value) == 'Should be "Other" instead of "int"'
+        assert str(e.value) == '"Other" is expected, but "int" is given'
 
     def test_prop_is_not_list(self):
         with pytest.raises(UnexpectedTypeError) as e:
             self.something(self.other(1, 2), 3)
-        assert str(e.value) == 'Should be "list" instead of "int"'
+        assert str(e.value) == '"list" is expected, but "int" is given'
 
     def test_all_items_are_not_kclass(self):
         with pytest.raises(UnexpectedTypeError) as e:
             self.something(self.other(1, 2), [self.other(3, 4), 5])
-        assert str(e.value) == 'Should be "List[Other]" instead of "int"'
+        assert str(e.value) == '"List[Other]" is expected, but "int" is given'
 
     def test_prop_is_not_k_property(self):
         with pytest.raises(UnexpectedTypeError) as e:
@@ -95,16 +95,16 @@ class TestWrongTypeInit:
                 an: AN(10)
                 n: int
 
-        assert str(e.value) == 'Should be "KProperty" instead of "int"'
+        assert str(e.value) == '"KProperty" is expected, but "int" is given'
 
     def test_prop_is_not_expected_type(self):
         with pytest.raises(UnexpectedTypeError) as e:
             self.other(1, '2')
-        assert str(e.value) == 'Should be "float, int" instead of "str"'
+        assert str(e.value) == '"float, int" is expected, but "str" is given'
 
         with pytest.raises(UnexpectedTypeError) as e:
             self.other([1], 2)
-        assert (
-            str(e.value)
-            == 'Should be "NoneType, date, float, int, str, time" instead of "list"'
+        assert str(e.value) == (
+            '"NoneType, date, float, int, str, time" '
+            'is expected, but "list" is given'
         )

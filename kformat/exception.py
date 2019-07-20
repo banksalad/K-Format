@@ -18,7 +18,10 @@ class UnexpectedTypeError(KFormatError):
         self.value = value
 
     def __str__(self) -> str:
-        return f'"{_name(self.expected)}" is expected, but "{_name(self.value)}" is given'
+        return (
+            f'"{_name(self.expected)}" is expected, '
+            f'but "{_name(self.value)}" is given'
+        )
 
 
 class InvalidLengthError(KFormatError):
@@ -27,4 +30,4 @@ class InvalidLengthError(KFormatError):
         self.length = length
 
     def __str__(self) -> str:
-        return f'Too long value is given(max: {self.length})'
+        return f'Invalid length of value is given(expected: {self.length})'
