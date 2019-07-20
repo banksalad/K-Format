@@ -8,7 +8,7 @@ __all__ = [
     'AN',
     'KFormatError',
     'UnexpectedTypeError',
-    'TooLongValueError',
+    'InvalidLengthError',
 ]
 
 __version__ = '0.3.0'

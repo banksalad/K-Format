@@ -1,6 +1,6 @@
 from typing import Type
 
-__all__ = ['KFormatError', 'UnexpectedTypeError', 'TooLongValueError']
+__all__ = ['KFormatError', 'UnexpectedTypeError', 'InvalidLengthError']
 
 
 def _name(type_: Type) -> str:
@@ -21,7 +21,7 @@ class UnexpectedTypeError(KFormatError):
         return f'"{_name(self.expected)}" is expected, but "{_name(self.value)}" is given'
 
 
-class TooLongValueError(KFormatError):
+class InvalidLengthError(KFormatError):
     def __init__(self, length: int):
         super().__init__()
         self.length = length

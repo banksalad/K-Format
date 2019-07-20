@@ -2,7 +2,7 @@ import abc
 from datetime import date, time
 from typing import Optional, Set
 
-from .exception import TooLongValueError
+from .exception import InvalidLengthError
 
 __all__ = ['AN', 'N']
 
@@ -43,7 +43,7 @@ class N(KProperty):
             self.length - len(p), self.filler
         )
         if len(b) > self.length:
-            raise TooLongValueError(self.length)
+            raise InvalidLengthError(self.length)
         return b
 
 
@@ -71,5 +71,5 @@ class AN(KProperty):
 
         b = bytes(s, encoding=AN.ENCODING).ljust(self.length, self.filler)
         if len(b) > self.length:
-            raise TooLongValueError(self.length)
+            raise InvalidLengthError(self.length)
         return b
