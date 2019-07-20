@@ -88,13 +88,13 @@ class TestWrongTypeInit:
         assert str(e.value) == 'Should be "List[Other]" instead of "int"'
 
     def test_prop_is_not_k_property(self):
-        @kclass
-        class One:
-            an: AN(10)
-            n: int
-
         with pytest.raises(WrongTypeError) as e:
-            One(1, 2)
+
+            @kclass
+            class One:
+                an: AN(10)
+                n: int
+
         assert str(e.value) == 'Should be "KProperty" instead of "int"'
 
     def test_prop_is_not_expected_type(self):
