@@ -3,10 +3,16 @@ import setuptools
 import kformat
 
 
+with open('README.md') as fp:
+    long_description = f'\n{fp.read()}'
+
+
 setuptools.setup(
     name='K-Format',
     version=kformat.__version__,
     description='Python Library for dealing with KCB K-Format',
+    long_description=long_description,
+    long_description_content_type='text/markdown',
     license='MIT',
     python_requires='>=3.7',
     url='https://github.com/Rainist/K-Format',
