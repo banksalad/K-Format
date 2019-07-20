@@ -1,5 +1,5 @@
 from . import kproperty
-from .exception import WrongTypeError
+from .exception import UnexpectedTypeError
 
 __all__ = ['kclass']
 
@@ -26,7 +26,7 @@ def _kclass(cls):
             and not _is_prop_list(prop)
             and not isinstance(prop, kproperty.KProperty)
         ):
-            raise WrongTypeError(kproperty.KProperty, prop.__name__)
+            raise UnexpectedTypeError(kproperty.KProperty, prop.__name__)
 
     @property
     def to_bytes(self):
@@ -38,14 +38,14 @@ def _kclass(cls):
         for ((k, prop), v) in zip(props, args):
             if _is_prop_kclass(prop):
                 if not isinstance(v, prop):
-                    raise WrongTypeError(prop, type(v))
+                    raise UnexpectedTypeError(prop, type(v))
                 prop_bytes.append(v.bytes)
             elif _is_prop_list(prop):
                 if not isinstance(v, list):
-                    raise WrongTypeError(list, type(v))
+                    raise UnexpectedTypeError(list, type(v))
                 for item in v:
                     if not getattr(item, KCLASS_ANNOTATION, False):
-                        raise WrongTypeError(
+                        raise UnexpectedTypeError(
                             f'List[{prop.__args__[0].__name__}]', type(item)
                         )
                 prop_bytes.extend(c.bytes for c in v)
@@ -54,7 +54,7 @@ def _kclass(cls):
                     expects = ', '.join(
                         sorted(t.__name__ for t in prop.expected_types)
                     )
-                    raise WrongTypeError(expects, type(v))
+                    raise UnexpectedTypeError(expects, type(v))
                 prop_bytes.append(prop.to_bytes(v))
 
             setattr(self, k, (prop, v))

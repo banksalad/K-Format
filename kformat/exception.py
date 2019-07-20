@@ -1,6 +1,6 @@
 from typing import Type
 
-__all__ = ['KFormatError', 'WrongTypeError', 'TooLongValueError']
+__all__ = ['KFormatError', 'UnexpectedTypeError', 'TooLongValueError']
 
 
 def _name(type_: Type) -> str:
@@ -11,7 +11,7 @@ class KFormatError(Exception):
     pass
 
 
-class WrongTypeError(KFormatError):
+class UnexpectedTypeError(KFormatError):
     def __init__(self, expected: Type, value):
         super().__init__()
         self.expected = expected

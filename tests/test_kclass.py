@@ -3,7 +3,7 @@ from unittest.mock import patch
 
 import pytest
 
-from kformat.exception import WrongTypeError
+from kformat.exception import UnexpectedTypeError
 from kformat.kclass import kclass
 from kformat.kproperty import AN, N
 
@@ -73,22 +73,22 @@ class TestWrongTypeInit:
         self.something = Something
 
     def test_prop_is_not_kclass(self):
-        with pytest.raises(WrongTypeError) as e:
+        with pytest.raises(UnexpectedTypeError) as e:
             self.something(1, [1, 2])
         assert str(e.value) == 'Should be "Other" instead of "int"'
 
     def test_prop_is_not_list(self):
-        with pytest.raises(WrongTypeError) as e:
+        with pytest.raises(UnexpectedTypeError) as e:
             self.something(self.other(1, 2), 3)
         assert str(e.value) == 'Should be "list" instead of "int"'
 
     def test_all_items_are_not_kclass(self):
-        with pytest.raises(WrongTypeError) as e:
+        with pytest.raises(UnexpectedTypeError) as e:
             self.something(self.other(1, 2), [self.other(3, 4), 5])
         assert str(e.value) == 'Should be "List[Other]" instead of "int"'
 
     def test_prop_is_not_k_property(self):
-        with pytest.raises(WrongTypeError) as e:
+        with pytest.raises(UnexpectedTypeError) as e:
 
             @kclass
             class One:
@@ -98,11 +98,11 @@ class TestWrongTypeInit:
         assert str(e.value) == 'Should be "KProperty" instead of "int"'
 
     def test_prop_is_not_expected_type(self):
-        with pytest.raises(WrongTypeError) as e:
+        with pytest.raises(UnexpectedTypeError) as e:
             self.other(1, '2')
         assert str(e.value) == 'Should be "float, int" instead of "str"'
 
-        with pytest.raises(WrongTypeError) as e:
+        with pytest.raises(UnexpectedTypeError) as e:
             self.other([1], 2)
         assert (
             str(e.value)
