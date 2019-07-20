@@ -1,5 +1,5 @@
-from unittest.mock import patch
 from typing import List
+from unittest.mock import patch
 
 import pytest
 

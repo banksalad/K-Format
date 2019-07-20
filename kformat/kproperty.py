@@ -11,12 +11,8 @@ TYPES = Set[type]
 
 
 class KProperty(metaclass=abc.ABCMeta):
-
     def __init__(
-        self,
-        length: int,
-        expected_types: TYPES,
-        filler: bytes
+        self, length: int, expected_types: TYPES, filler: bytes
     ) -> None:
         self.length = length
         self.expected_types = expected_types
@@ -33,17 +29,8 @@ class N(KProperty):
     FILLER = b'0'
     ENCODING = 'ascii'
 
-    def __init__(
-        self,
-        length: int,
-        *,
-        filler: Optional[bytes]=None
-    ) -> None:
-        super().__init__(
-            length,
-            N.EXPECTED_TYPES,
-            filler or N.FILLER
-        )
+    def __init__(self, length: int, *, filler: Optional[bytes] = None) -> None:
+        super().__init__(length, N.EXPECTED_TYPES, filler or N.FILLER)
 
     def to_bytes(self, v: Optional) -> bytes:
         try:
@@ -69,17 +56,8 @@ class AN(KProperty):
     TIME_FORMAT = '%H%M%S%f'
     TIME_FORMAT_SLICE = 0, -2
 
-    def __init__(
-        self,
-        length: int,
-        *,
-        filler: Optional[bytes]=None
-    ) -> None:
-        super().__init__(
-            length,
-            AN.EXPECTED_TYPES,
-            filler or AN.FILLER
-        )
+    def __init__(self, length: int, *, filler: Optional[bytes] = None) -> None:
+        super().__init__(length, AN.EXPECTED_TYPES, filler or AN.FILLER)
 
     def to_bytes(self, v: Optional) -> bytes:
         if v is None or isinstance(v, str):
