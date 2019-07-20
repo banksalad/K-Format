@@ -23,6 +23,15 @@ def _is_valid_child_prop(prop) -> bool:
     )
 
 
+def _combine_params(props, args, kwargs):
+    for i, (field_name, field_type) in enumerate(props):
+        try:
+            value = kwargs[field_name]
+        except KeyError:
+            value = args[i]
+        yield field_name, field_type, value
+
+
 def _kclass(cls):
     setattr(cls, KCLASS_ANNOTATION, True)
 
@@ -36,10 +45,10 @@ def _kclass(cls):
     def to_bytes(self):
         return b''.join(self._bytes)
 
-    def init(self, *args):
+    def init(self, *args, **kwargs):
         prop_bytes = []
 
-        for ((k, prop), v) in zip(props, args):
+        for k, prop, v in _combine_params(props, args, kwargs):
             if _is_prop_kclass(prop):
                 if not isinstance(v, prop):
                     raise UnexpectedTypeError(prop, type(v))

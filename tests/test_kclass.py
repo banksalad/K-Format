@@ -25,6 +25,27 @@ def test_kclass_init():
     sth = Something(123, 'k-class', Other(-456, 'subclass'), [], None)
     assert sth is not None
 
+    sth = Something(
+        n=123,
+        an='k-class',
+        other=Other(-456, 'subclass'),
+        others=[],
+        filler=None,
+    )
+    assert sth is not None
+
+    one = Other(n=123, an='1')
+    assert (one.n[1], one.an[1]) == (123, '1')
+
+    one = Other(123, an='1')
+    assert (one.n[1], one.an[1]) == (123, '1')
+
+    one = Other(an='1', n=123)
+    assert (one.n[1], one.an[1]) == (123, '1')
+
+    one = Other(123, an='1', n=456)
+    assert (one.n[1], one.an[1]) == (456, '1')
+
 
 @patch('kformat.kproperty.AN.to_bytes', lambda s, v: b'AN')
 @patch('kformat.kproperty.N.to_bytes', lambda s, v: b'N')
