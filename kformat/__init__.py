@@ -7,6 +7,7 @@ __all__ = [
     'N',
     'AN',
     'KFormatError',
+    'WrongTypeError',
     'TooLongValueError',
 ]
 

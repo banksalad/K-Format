@@ -3,6 +3,7 @@ from unittest.mock import patch
 
 import pytest
 
+from kformat.exception import WrongTypeError
 from kformat.kclass import kclass
 from kformat.kproperty import AN, N
 
@@ -72,19 +73,19 @@ class TestWrongTypeInit:
         self.something = Something
 
     def test_prop_is_not_kclass(self):
-        with pytest.raises(AssertionError) as e:
+        with pytest.raises(WrongTypeError) as e:
             self.something(1, [1, 2])
-        assert str(e.value) == 'int is not type of Other'
+        assert str(e.value) == 'Should be "Other" instead of "int"'
 
     def test_prop_is_not_list(self):
-        with pytest.raises(AssertionError) as e:
+        with pytest.raises(WrongTypeError) as e:
             self.something(self.other(1, 2), 3)
-        assert str(e.value) == 'int is not List'
+        assert str(e.value) == 'Should be "list" instead of "int"'
 
     def test_all_items_are_not_kclass(self):
-        with pytest.raises(AssertionError) as e:
+        with pytest.raises(WrongTypeError) as e:
             self.something(self.other(1, 2), [self.other(3, 4), 5])
-        assert str(e.value) == 'All of list items should be type of K-Class'
+        assert str(e.value) == 'Should be "List[Other]" instead of "int"'
 
     def test_prop_is_not_k_property(self):
         @kclass
@@ -92,15 +93,18 @@ class TestWrongTypeInit:
             an: AN(10)
             n: int
 
-        with pytest.raises(AssertionError) as e:
+        with pytest.raises(WrongTypeError) as e:
             One(1, 2)
-        assert str(e.value) == 'int is not subtype of KProperty'
+        assert str(e.value) == 'Should be "KProperty" instead of "int"'
 
     def test_prop_is_not_expected_type(self):
-        with pytest.raises(AssertionError) as e:
+        with pytest.raises(WrongTypeError) as e:
             self.other(1, '2')
-        assert str(e.value) == 'N cannot accept str type'
+        assert str(e.value) == 'Should be "float, int" instead of "str"'
 
-        with pytest.raises(AssertionError) as e:
+        with pytest.raises(WrongTypeError) as e:
             self.other([1], 2)
-        assert str(e.value) == 'AN cannot accept list type'
+        assert (
+            str(e.value)
+            == 'Should be "NoneType, date, float, int, str, time" instead of "list"'
+        )

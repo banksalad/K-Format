@@ -1,4 +1,5 @@
 from . import kproperty
+from .exception import WrongTypeError
 
 __all__ = ['kclass']
 
@@ -20,24 +21,26 @@ def _kclass(cls):
 
         for ((k, prop), v) in zip(props, args):
             if hasattr(prop, KCLASS_ANNOTATION) and prop.__kclass__:
-                assert isinstance(
-                    v, prop
-                ), f'{type(v).__name__} is not type of {prop.__name__}'
+                if not isinstance(v, prop):
+                    raise WrongTypeError(prop, type(v))
                 prop_bytes.append(v.bytes)
             elif hasattr(prop, '__origin__') and prop.__origin__ == list:
-                assert isinstance(v, list), f'{type(v).__name__} is not List'
-                assert all(
-                    getattr(item, KCLASS_ANNOTATION, False) for item in v
-                ), f'All of list items should be type of K-Class'
+                if not isinstance(v, list):
+                    raise WrongTypeError(list, type(v))
+                for item in v:
+                    if not getattr(item, KCLASS_ANNOTATION, False):
+                        raise WrongTypeError(
+                            f'List[{prop.__args__[0].__name__}]', type(item)
+                        )
                 prop_bytes.extend(c.bytes for c in v)
             else:
-                assert isinstance(
-                    prop, kproperty.KProperty
-                ), f'{prop.__name__} is not subtype of KProperty'
-                assert type(v) in prop.expected_types, (
-                    f'{prop.__class__.__name__} cannot '
-                    f'accept {type(v).__name__} type'
-                )
+                if not isinstance(prop, kproperty.KProperty):
+                    raise WrongTypeError(kproperty.KProperty, prop.__name__)
+                if type(v) not in prop.expected_types:
+                    expects = ', '.join(
+                        sorted(t.__name__ for t in prop.expected_types)
+                    )
+                    raise WrongTypeError(expects, type(v))
                 prop_bytes.append(prop.to_bytes(v))
 
             setattr(self, k, (prop, v))
