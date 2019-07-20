@@ -2,6 +2,8 @@ import abc
 from datetime import date, time
 from typing import Optional, Set
 
+from .exception import TooLongValueError
+
 __all__ = ['AN', 'N']
 
 
@@ -50,15 +52,12 @@ class N(KProperty):
         except TypeError:
             p, s = b'', ''
 
-        try:
-            b = p + bytes(s, encoding=N.ENCODING).rjust(
-                self.length - len(p),
-                self.filler
-            )
-            assert len(b) <= self.length
-            return b
-        except AssertionError:
-            raise ValueError(f'Too long value is given(max: {self.length})')
+        b = p + bytes(s, encoding=N.ENCODING).rjust(
+            self.length - len(p), self.filler
+        )
+        if len(b) > self.length:
+            raise TooLongValueError(self.length)
+        return b
 
 
 class AN(KProperty):
@@ -92,10 +91,7 @@ class AN(KProperty):
         else:
             s = str(int(v))
 
-        try:
-            b = bytes(s, encoding=AN.ENCODING).ljust(self.length, self.filler)
-            assert len(b) <= self.length
-            return b
-        except AssertionError:
-            raise ValueError(f'Too long value is given(max: {self.length})')
-
+        b = bytes(s, encoding=AN.ENCODING).ljust(self.length, self.filler)
+        if len(b) > self.length:
+            raise TooLongValueError(self.length)
+        return b
