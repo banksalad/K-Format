@@ -2,6 +2,8 @@ import abc
 from datetime import date, time
 from typing import Optional, Set
 
+from .exception import InvalidLengthError
+
 __all__ = ['AN', 'N']
 
 
@@ -9,12 +11,8 @@ TYPES = Set[type]
 
 
 class KProperty(metaclass=abc.ABCMeta):
-
     def __init__(
-        self,
-        length: int,
-        expected_types: TYPES,
-        filler: bytes
+        self, length: int, expected_types: TYPES, filler: bytes
     ) -> None:
         self.length = length
         self.expected_types = expected_types
@@ -31,17 +29,8 @@ class N(KProperty):
     FILLER = b'0'
     ENCODING = 'ascii'
 
-    def __init__(
-        self,
-        length: int,
-        *,
-        filler: Optional[bytes]=None
-    ) -> None:
-        super().__init__(
-            length,
-            N.EXPECTED_TYPES,
-            filler or N.FILLER
-        )
+    def __init__(self, length: int, *, filler: Optional[bytes] = None) -> None:
+        super().__init__(length, N.EXPECTED_TYPES, filler or N.FILLER)
 
     def to_bytes(self, v: Optional) -> bytes:
         try:
@@ -50,15 +39,12 @@ class N(KProperty):
         except TypeError:
             p, s = b'', ''
 
-        try:
-            b = p + bytes(s, encoding=N.ENCODING).rjust(
-                self.length - len(p),
-                self.filler
-            )
-            assert len(b) <= self.length
-            return b
-        except AssertionError:
-            raise ValueError(f'Too long value is given(max: {self.length})')
+        b = p + bytes(s, encoding=N.ENCODING).rjust(
+            self.length - len(p), self.filler
+        )
+        if len(b) > self.length:
+            raise InvalidLengthError(self.length)
+        return b
 
 
 class AN(KProperty):
@@ -70,17 +56,8 @@ class AN(KProperty):
     TIME_FORMAT = '%H%M%S%f'
     TIME_FORMAT_SLICE = 0, -2
 
-    def __init__(
-        self,
-        length: int,
-        *,
-        filler: Optional[bytes]=None
-    ) -> None:
-        super().__init__(
-            length,
-            AN.EXPECTED_TYPES,
-            filler or AN.FILLER
-        )
+    def __init__(self, length: int, *, filler: Optional[bytes] = None) -> None:
+        super().__init__(length, AN.EXPECTED_TYPES, filler or AN.FILLER)
 
     def to_bytes(self, v: Optional) -> bytes:
         if v is None or isinstance(v, str):
@@ -92,10 +69,7 @@ class AN(KProperty):
         else:
             s = str(int(v))
 
-        try:
-            b = bytes(s, encoding=AN.ENCODING).ljust(self.length, self.filler)
-            assert len(b) <= self.length
-            return b
-        except AssertionError:
-            raise ValueError(f'Too long value is given(max: {self.length})')
-
+        b = bytes(s, encoding=AN.ENCODING).ljust(self.length, self.filler)
+        if len(b) > self.length:
+            raise InvalidLengthError(self.length)
+        return b

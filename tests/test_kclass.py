@@ -1,6 +1,9 @@
-from unittest.mock import patch
 from typing import List
+from unittest.mock import patch
 
+import pytest
+
+from kformat.exception import UnexpectedTypeError
 from kformat.kclass import kclass
 from kformat.kproperty import AN, N
 
@@ -51,3 +54,57 @@ def test_list_of_kclass_creation():
 
     some_list = [Something(1), Something(2), Something(3)]
     assert b''.join(s.bytes for s in some_list) == b'123'
+
+
+class TestWrongTypeInit:
+    @pytest.fixture(autouse=True)
+    def setup(self):
+        @kclass
+        class Other:
+            an: AN(10)
+            n: N(5)
+
+        @kclass
+        class Something:
+            other: Other
+            others: List[Other]
+
+        self.other = Other
+        self.something = Something
+
+    def test_prop_is_not_kclass(self):
+        with pytest.raises(UnexpectedTypeError) as e:
+            self.something(1, [1, 2])
+        assert str(e.value) == '"Other" is expected, but "int" is given'
+
+    def test_prop_is_not_list(self):
+        with pytest.raises(UnexpectedTypeError) as e:
+            self.something(self.other(1, 2), 3)
+        assert str(e.value) == '"list" is expected, but "int" is given'
+
+    def test_all_items_are_not_kclass(self):
+        with pytest.raises(UnexpectedTypeError) as e:
+            self.something(self.other(1, 2), [self.other(3, 4), 5])
+        assert str(e.value) == '"List[Other]" is expected, but "int" is given'
+
+    def test_prop_is_not_k_property(self):
+        with pytest.raises(UnexpectedTypeError) as e:
+
+            @kclass
+            class One:
+                an: AN(10)
+                n: int
+
+        assert str(e.value) == '"KProperty" is expected, but "int" is given'
+
+    def test_prop_is_not_expected_type(self):
+        with pytest.raises(UnexpectedTypeError) as e:
+            self.other(1, '2')
+        assert str(e.value) == '"float, int" is expected, but "str" is given'
+
+        with pytest.raises(UnexpectedTypeError) as e:
+            self.other([1], 2)
+        assert str(e.value) == (
+            '"NoneType, date, float, int, str, time" '
+            'is expected, but "list" is given'
+        )

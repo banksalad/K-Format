@@ -2,6 +2,7 @@ from datetime import date, time
 
 import pytest
 
+from kformat.exception import InvalidLengthError
 from kformat.kproperty import AN, N
 
 
@@ -30,9 +31,9 @@ def test_N_to_bytes_with_filler(length, filler, value, expected):
 
 @pytest.mark.parametrize('length, value', [(3, 1234), (2, -10)])
 def test_N_to_bytes_with_invalid_length(length, value):
-    with pytest.raises(ValueError) as e:
+    with pytest.raises(InvalidLengthError) as e:
         assert N(length).to_bytes(value)
-    assert 'Too long value is given' in str(e.value)
+    assert 'Invalid length of value is given' in str(e.value)
 
 
 @pytest.mark.parametrize(
@@ -51,6 +52,6 @@ def test_AN_to_bytes(length, value, expected):
 
 
 def test_AN_to_bytes_with_invalid_length():
-    with pytest.raises(ValueError) as e:
+    with pytest.raises(InvalidLengthError) as e:
         assert AN(5).to_bytes(date(2018, 9, 9))
-    assert 'Too long value is given' in str(e.value)
+    assert 'Invalid length of value is given' in str(e.value)
