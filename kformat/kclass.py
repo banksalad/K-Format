@@ -25,7 +25,7 @@ def _is_valid_child_prop(prop) -> bool:
 
 
 def _generate_args(props):
-    return ['self'] + [k for k, _ in props]
+    return ['self', *(k for k, _ in props)]
 
 
 def _generate_attributes(props):
