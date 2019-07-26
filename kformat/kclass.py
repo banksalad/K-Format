@@ -5,6 +5,7 @@ __all__ = ['kclass']
 
 
 KCLASS_ANNOTATION = '__kclass__'
+_POST_INIT = '__post_init__'
 
 
 def _is_prop_kclass(prop) -> bool:
@@ -31,7 +32,7 @@ def _generate_attributes(props):
     body_lines = []
     for key, _ in props:
         body_lines.append(f'self.{key} = {key}')
-    body_lines.append(f'self.__post_init__()')
+    body_lines.append(f'self.{_POST_INIT}()')
     return body_lines
 
 
@@ -92,7 +93,7 @@ def _kclass(cls):
 
     setattr(cls, 'bytes', to_bytes)
 
-    setattr(cls, '__post_init__', post_init)
+    setattr(cls, _POST_INIT, post_init)
 
     args = _generate_args(props)
     body = _generate_attributes(props)
