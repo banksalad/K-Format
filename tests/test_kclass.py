@@ -43,8 +43,16 @@ def test_kclass_init():
     one = Other(an='1', n=123)
     assert (one.n[1], one.an[1]) == (123, '1')
 
-    one = Other(123, an='1', n=456)
-    assert (one.n[1], one.an[1]) == (456, '1')
+
+def test_too_many_argument_init_in_kclass():
+    @kclass
+    class Other:
+        n: N(5)
+        an: AN(10)
+
+    with pytest.raises(TypeError) as e:
+        one = Other(123, an='1', n=456)
+    assert str(e.value) == '__init__() got multiple values for argument \'n\''
 
 
 @patch('kformat.kproperty.AN.to_bytes', lambda s, v: b'AN')
