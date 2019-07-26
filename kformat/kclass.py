@@ -23,13 +23,27 @@ def _is_valid_child_prop(prop) -> bool:
     )
 
 
-def _combine_params(props, args, kwargs):
-    for i, (field_name, field_type) in enumerate(props):
-        try:
-            value = kwargs[field_name]
-        except KeyError:
-            value = args[i]
-        yield field_name, field_type, value
+def _generate_args(props):
+    return ['self'] + [k for k, _ in props]
+
+
+def _generate_attributes(props):
+    body_lines = []
+    for key, _ in props:
+        body_lines.append(f'self.{key} = {key}')
+    body_lines.append(f'self.__post_init__()')
+    return body_lines
+
+
+def _generate_init_function(args, body):
+    locals = {}
+    args = ', '.join(args)
+    body = '\n'.join(f'    {b}' for b in body)
+
+    txt = f'def __init__({args}):\n{body}'
+    exec(txt, {}, locals)
+
+    return locals['__init__']
 
 
 def _kclass(cls):
@@ -45,10 +59,12 @@ def _kclass(cls):
     def to_bytes(self):
         return b''.join(self._bytes)
 
-    def init(self, *args, **kwargs):
+    def post_init(self):
         prop_bytes = []
 
-        for k, prop, v in _combine_params(props, args, kwargs):
+        for k, prop in props:
+            v = getattr(self, k)
+
             if _is_prop_kclass(prop):
                 if not isinstance(v, prop):
                     raise UnexpectedTypeError(prop, type(v))
@@ -76,7 +92,11 @@ def _kclass(cls):
 
     setattr(cls, 'bytes', to_bytes)
 
-    setattr(cls, '__init__', init)
+    setattr(cls, '__post_init__', post_init)
+
+    args = _generate_args(props)
+    body = _generate_attributes(props)
+    setattr(cls, '__init__', _generate_init_function(args, body))
 
     return cls
 
