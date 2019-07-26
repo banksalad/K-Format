@@ -37,14 +37,14 @@ def _generate_attributes(props):
 
 
 def _generate_init_function(args, body):
-    locals = {}
     args = ', '.join(args)
     body = '\n'.join(f'    {b}' for b in body)
-
     txt = f'def __init__({args}):\n{body}'
-    exec(txt, {}, locals)
 
-    return locals['__init__']
+    locals_ = {}
+    exec(txt, {}, locals_)
+
+    return locals_['__init__']
 
 
 def _kclass(cls):
