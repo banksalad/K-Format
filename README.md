@@ -1,8 +1,8 @@
 # K-Format
 
-[![Build Status](https://travis-ci.org/Rainist/K-Format.svg?branch=master)](https://travis-ci.org/Rainist/K-Format) [![PyPI](https://img.shields.io/pypi/v/K-Format.svg)](https://badge.fury.io/py/K-Format) [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/K-Format.svg)](https://badge.fury.io/py/K-Format) [![Rainist](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-Rainist-blue.svg)](https://rainist.com/recruit)
+[![Build Status](https://travis-ci.org/Rainist/K-Format.svg?branch=master)](https://travis-ci.org/Rainist/K-Format) [![PyPI](https://img.shields.io/pypi/v/K-Format.svg)](https://badge.fury.io/py/K-Format) [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/K-Format.svg)](https://badge.fury.io/py/K-Format) [![Rainist](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-Rainist-blue.svg)](https://rainist.com/recruit) [![codecov](https://codecov.io/gh/Rainist/K-Format/branch/master/graph/badge.svg)](https://codecov.io/gh/Rainist/K-Format)
 
-K-Format is a Python library designed for dealing with KCB K-Format in a convenient way. 
+K-Format is a Python library designed for dealing with KCB K-Format in a convenient way.
 
 ## Getting Started
 
@@ -21,7 +21,7 @@ class Base:
     AN: `alpha-numeric`
     N: `numberic`
     """
-    
+
     birthday: AN(8)
     name: AN(10)
     grade: N(3)
