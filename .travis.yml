@@ -10,9 +10,13 @@ cache:
 
 install:
   - pip install -r requirements-dev.txt
+  - pip install codecov
 
 script:
-  - pytest
+  - pytest --cov kformat --cov-branch
+
+after_script:
+  - codecov
 
 deploy:
   provider: pypi
