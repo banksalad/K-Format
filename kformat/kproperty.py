@@ -11,10 +11,10 @@ __all__ = ['AN', 'N']
 TYPES = Set[type]
 
 
-class UnicodeErrorHandler(enum.Enum):
-    STRICT: str = "strict"
-    IGNORE: str = "ignore"
-    REPLACE: str = "replace"
+class UnicodeErrorHandler(str, enum.Enum):
+    STRICT = "strict"
+    IGNORE = "ignore"
+    REPLACE = "replace"
 
 
 class KProperty(metaclass=abc.ABCMeta):
