@@ -2,7 +2,7 @@ from datetime import date, time
 
 import pytest
 
-from kformat.exception import InvalidLengthError, UnicodeKFormatError
+from kformat.exception import InvalidLengthError, UnsupportedUnicodeError
 from kformat.kproperty import AN, N, Errors
 
 
@@ -58,7 +58,7 @@ def test_AN_to_bytes_with_invalid_length():
 
 
 def test_AN_to_bytes_with_unicode_error_strict():
-    with pytest.raises(UnicodeKFormatError) as e:
+    with pytest.raises(UnsupportedUnicodeError) as e:
         AN(30, errors=Errors.STRICT).to_bytes("동아・한신아파트")
     assert "codec can't encode character" in str(e.value)
 

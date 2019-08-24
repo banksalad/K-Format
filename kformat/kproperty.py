@@ -3,7 +3,7 @@ import enum
 from datetime import date, time
 from typing import Optional, Set
 
-from .exception import InvalidLengthError, UnicodeKFormatError
+from .exception import InvalidLengthError, UnsupportedUnicodeError
 
 __all__ = ['AN', 'N']
 
@@ -81,7 +81,7 @@ class AN(KProperty):
         try:
             b = bytes(s, encoding=AN.ENCODING, errors=self.errors).ljust(self.length, self.filler)
         except UnicodeError as e:
-            raise UnicodeKFormatError(str(e)) from e
+            raise UnsupportedUnicodeError(str(e)) from e
 
         if len(b) > self.length:
             raise InvalidLengthError(self.length)
