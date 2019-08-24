@@ -1,13 +1,20 @@
 import abc
+import enum
 from datetime import date, time
 from typing import Optional, Set
 
-from .exception import InvalidLengthError
+from .exception import InvalidLengthError, UnsupportedUnicodeError
 
 __all__ = ['AN', 'N']
 
 
 TYPES = Set[type]
+
+
+class UnicodeErrorHandler(str, enum.Enum):
+    STRICT = "strict"
+    IGNORE = "ignore"
+    REPLACE = "replace"
 
 
 class KProperty(metaclass=abc.ABCMeta):
@@ -56,8 +63,10 @@ class AN(KProperty):
     TIME_FORMAT = '%H%M%S%f'
     TIME_FORMAT_SLICE = 0, -2
 
-    def __init__(self, length: int, *, filler: Optional[bytes] = None) -> None:
+    def __init__(self, length: int, *, filler: Optional[bytes] = None,
+                 errors: Optional[UnicodeErrorHandler] = UnicodeErrorHandler.STRICT) -> None:
         super().__init__(length, AN.EXPECTED_TYPES, filler or AN.FILLER)
+        self.errors = errors
 
     def to_bytes(self, v: Optional) -> bytes:
         if v is None or isinstance(v, str):
@@ -69,7 +78,11 @@ class AN(KProperty):
         else:
             s = str(int(v))
 
-        b = bytes(s, encoding=AN.ENCODING).ljust(self.length, self.filler)
+        try:
+            b = bytes(s, encoding=AN.ENCODING, errors=self.errors.value).ljust(self.length, self.filler)
+        except UnicodeError as e:
+            raise UnsupportedUnicodeError(str(e)) from e
+
         if len(b) > self.length:
             raise InvalidLengthError(self.length)
         return b
