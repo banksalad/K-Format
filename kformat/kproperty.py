@@ -66,7 +66,7 @@ class AN(KProperty):
     def __init__(self, length: int, *, filler: Optional[bytes] = None,
                  errors: Optional[UnicodeErrorHandler] = UnicodeErrorHandler.STRICT) -> None:
         super().__init__(length, AN.EXPECTED_TYPES, filler or AN.FILLER)
-        self.errors = errors.value
+        self.errors = errors
 
     def to_bytes(self, v: Optional) -> bytes:
         if v is None or isinstance(v, str):
@@ -79,7 +79,7 @@ class AN(KProperty):
             s = str(int(v))
 
         try:
-            b = bytes(s, encoding=AN.ENCODING, errors=self.errors).ljust(self.length, self.filler)
+            b = bytes(s, encoding=AN.ENCODING, errors=self.errors.value).ljust(self.length, self.filler)
         except UnicodeError as e:
             raise UnsupportedUnicodeError(str(e)) from e
 
