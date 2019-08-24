@@ -13,9 +13,11 @@ install:
   - pip install codecov
 
 script:
-  - pytest --cov kformat --cov-branch
+  - make test
+  - make check
 
 after_script:
+  - make coverage
   - codecov
 
 deploy:
