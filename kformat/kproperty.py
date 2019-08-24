@@ -11,7 +11,7 @@ __all__ = ['AN', 'N']
 TYPES = Set[type]
 
 
-class Errors(enum.Enum):
+class UnicodeErrorHandler(enum.Enum):
     STRICT: str = "strict"
     IGNORE: str = "ignore"
     REPLACE: str = "replace"
@@ -64,7 +64,7 @@ class AN(KProperty):
     TIME_FORMAT_SLICE = 0, -2
 
     def __init__(self, length: int, *, filler: Optional[bytes] = None,
-                 errors: Optional[Errors] = Errors.STRICT) -> None:
+                 errors: Optional[UnicodeErrorHandler] = UnicodeErrorHandler.STRICT) -> None:
         super().__init__(length, AN.EXPECTED_TYPES, filler or AN.FILLER)
         self.errors = errors.value
 

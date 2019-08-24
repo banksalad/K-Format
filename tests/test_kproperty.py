@@ -3,7 +3,7 @@ from datetime import date, time
 import pytest
 
 from kformat.exception import InvalidLengthError, UnsupportedUnicodeError
-from kformat.kproperty import AN, N, Errors
+from kformat.kproperty import AN, N, UnicodeErrorHandler
 
 
 @pytest.mark.parametrize(
@@ -59,19 +59,19 @@ def test_AN_to_bytes_with_invalid_length():
 
 def test_AN_to_bytes_with_unicode_error_strict():
     with pytest.raises(UnsupportedUnicodeError) as e:
-        AN(30, errors=Errors.STRICT).to_bytes("동아・한신아파트")
+        AN(30, errors=UnicodeErrorHandler.STRICT).to_bytes("동아・한신아파트")
     assert "codec can't encode character" in str(e.value)
 
 
 def test_AN_to_bytes_with_unicode_error_ignore():
     assert (
-        AN(16, errors=Errors.IGNORE).to_bytes("동아・한신아파트")
+        AN(16, errors=UnicodeErrorHandler.IGNORE).to_bytes("동아・한신아파트")
         == b"\xb5\xbf\xbe\xc6\xc7\xd1\xbd\xc5\xbe\xc6\xc6\xc4\xc6\xae  "
     )
 
 
 def test_AN_to_bytes_with_unicode_error_replace():
     assert (
-        AN(16, errors=Errors.REPLACE).to_bytes("동아・한신아파트")
+        AN(16, errors=UnicodeErrorHandler.REPLACE).to_bytes("동아・한신아파트")
         == b"\xb5\xbf\xbe\xc6?\xc7\xd1\xbd\xc5\xbe\xc6\xc6\xc4\xc6\xae "
     )
