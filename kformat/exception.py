@@ -1,6 +1,11 @@
 from typing import Type
 
-__all__ = ['KFormatError', 'UnexpectedTypeError', 'InvalidLengthError', 'UnsupportedUnicodeError']
+__all__ = [
+    'KFormatError',
+    'UnexpectedTypeError',
+    'InvalidLengthError',
+    'UnsupportedUnicodeError',
+]
 
 
 def _name(type_: Type) -> str:
