@@ -1,5 +1,3 @@
-# vi: ft=make
-
 .PHONY: check
 check:
 	isort --recursive --check-only kformat tests
