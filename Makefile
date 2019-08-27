@@ -14,6 +14,6 @@ format:
 test:
 	python -m pytest
 
-.PHONY: lint
+.PHONY: coverage
 coverage:
 	python -m  pytest --cov kformat --cov-branch
