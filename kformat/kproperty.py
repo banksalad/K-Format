@@ -63,8 +63,13 @@ class AN(KProperty):
     TIME_FORMAT = '%H%M%S%f'
     TIME_FORMAT_SLICE = 0, -2
 
-    def __init__(self, length: int, *, filler: Optional[bytes] = None,
-                 errors: Optional[UnicodeErrorHandler] = UnicodeErrorHandler.STRICT) -> None:
+    def __init__(
+        self,
+        length: int,
+        *,
+        filler: Optional[bytes] = None,
+        errors: Optional[UnicodeErrorHandler] = UnicodeErrorHandler.STRICT
+    ) -> None:
         super().__init__(length, AN.EXPECTED_TYPES, filler or AN.FILLER)
         self.errors = errors
 
@@ -79,7 +84,9 @@ class AN(KProperty):
             s = str(int(v))
 
         try:
-            b = bytes(s, encoding=AN.ENCODING, errors=self.errors.value).ljust(self.length, self.filler)
+            b = bytes(s, encoding=AN.ENCODING, errors=self.errors.value).ljust(
+                self.length, self.filler
+            )
         except UnicodeError as e:
             raise UnsupportedUnicodeError(str(e)) from e
 
